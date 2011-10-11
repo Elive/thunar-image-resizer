@@ -1,0 +1,60 @@
+#!/bin/bash
+guitool=zenity
+
+exit_me(){
+   rm -rf ${tempdir}
+   exit 1
+}
+
+trap "exit_me 0" 0 1 2 5 15
+
+LOCKFILE="/tmp/.${USER}-$(basename $0).lock"
+[[ -r $LOCKFILE ]] && PROCESS=$(cat $LOCKFILE) || PROCESS=" "
+
+if (ps -p $PROCESS) >/dev/null 2>&1
+then
+   echo "E: $(basename $0) is already running"
+   $guitool --error --text="$(basename $0) is already running"
+   exit 1
+else
+   rm -f $LOCKFILE
+   echo $$ > $LOCKFILE
+fi
+
+# Dialog box to choose thumb's size
+SIZE=`$guitool --list --height=230 --title="Choose the thumbnail's size" --radiolist --column=$"Check" --column=$"Size" "" "320x240" "" "640x480" "" "800x600" "" "1024x768" || echo cancel`
+[[ "$SIZE" = "cancel" ]] && exit
+
+QUALITY=`$guitool --entry --entry-text="85" --title="Quality" --text="Choose the quality value (90 for optimal)" || echo cancel`
+[[ "$SIZE" = "cancel" ]] && exit
+[[ -z "$QUALITY" ]] && QUALITY=85
+
+if [[ "$SIZE" = "" ]]; then    
+	$guitool --error --text="Size not defined by user. Please choose a size to use. "
+exit 1
+fi
+
+# How many files to make the progress bar
+PROGRESS=0
+NUMBER_OF_FILES="$#"
+let "INCREMENT=100/$NUMBER_OF_FILES"
+
+mkdir -p "Images Resized"
+
+# Creating thumbnails. Specific work on picture should be add there as convert's option
+( for i in "$@"
+   do
+echo "$PROGRESS"
+file="$i"
+filename="${file##*/}"
+filenameraw="${filename%.*}"
+echo -e "# Converting: \t ${filename}"
+
+
+convert -resize $SIZE -quality $QUALITY "${file}" "Images Resized/${filename%\.*}.jpg"
+
+let "PROGRESS+=$INCREMENT"
+done
+) | $guitool  --progress --title "Creating thumbnails..." --percentage=0 --auto-close --auto-kill
+
+$guitool --info --text="Finished, you can found them in the directory 'Images Resized'"

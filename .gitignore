@@ -7,3 +7,4 @@
 *.lock
 # debian build dirs
 debian
+mkdeb_editing

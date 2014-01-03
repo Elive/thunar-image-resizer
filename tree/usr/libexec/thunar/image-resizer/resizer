@@ -35,6 +35,28 @@ QUALITY="$( $guitool --entry --entry-text="85" --title="Quality" --text="Choose 
 [[ -z "$QUALITY" ]] && QUALITY=85
 
 
+
+# precache
+PROGRESS=0
+NUMBER_OF_FILES="$#"
+let "INCREMENT=100/$NUMBER_OF_FILES"
+
+( for i in "$@"
+do
+    echo "$PROGRESS"
+    file="$i"
+
+    # precache
+    dd if="$file" of=/dev/null 2>/dev/null
+
+    # increment progress
+    let "PROGRESS+=$INCREMENT"
+done
+) | $guitool  --progress --title "Precaching..." --percentage=0 --auto-close --auto-kill
+
+
+# Creating thumbnails. Specific work on picture should be add there as convert's option
+
 # How many files to make the progress bar
 PROGRESS=0
 NUMBER_OF_FILES="$#"
@@ -42,7 +64,6 @@ let "INCREMENT=100/$NUMBER_OF_FILES"
 
 mkdir -p "Images Resized"
 
-# Creating thumbnails. Specific work on picture should be add there as convert's option
 ( for i in "$@"
    do
        echo "$PROGRESS"

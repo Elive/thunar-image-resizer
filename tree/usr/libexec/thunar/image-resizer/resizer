@@ -6,11 +6,9 @@ lockfile="/tmp/.$(basename $0)-${USER}.lock"
 
 exit_ok(){
     rm -f "$lockfile"
-    rm -f dump
 }
 exit_error(){
     rm -f "$lockfile"
-    rm -f dump
 }
 
 if [[ -r "$lockfile" ]] ; then

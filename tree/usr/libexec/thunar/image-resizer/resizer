@@ -35,7 +35,6 @@ echo "$$" > "$lockfile"
 # end lock system }}}
 
 
-
 # Dialog box to choose thumb's size
 SIZE="$( $guitool --list --height=300 --title="Choose the thumbnail's size" --text="Select the resolution for the images to convert" --radiolist --column=$"Check" --column=$"Size" "" "Auto (for photos)" "" "Same" "" "320x240" "" "640x480" "" "800x600" "" "1024x768" "" "2048x1080" "" "4096x2160" "" "7680x4320" || echo cancel )"
 [[ "$SIZE" = "cancel" ]] && exit

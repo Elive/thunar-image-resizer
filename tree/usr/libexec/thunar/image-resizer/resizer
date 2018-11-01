@@ -107,7 +107,7 @@ mkdir -p "Images Resized"
 
        let "PROGRESS+=$INCREMENT"
    done
-   ) | $guitool  --progress --title "Creating thumbnails..." --percentage=0 --auto-close --auto-kill
+   ) | $guitool  --progress --title "Converting Images..." --percentage=0 --auto-close --auto-kill
 
 $guitool --info --text="Finished, you can found them in the directory 'Images Resized'"
 

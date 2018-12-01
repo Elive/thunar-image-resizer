@@ -93,11 +93,11 @@ mkdir -p "Images Resized"
 	       size_horiz="$( identify "$file" | tr ' ' '\n' | grep -E "[[:digit:]]+x[[:digit:]]+" | head -1 | sed -e 's|x.*$||g' )"
 	       if [[ "$size_horiz" -lt 2400 ]] ; then
 		   # no need to resize images smaller than 2400
-		   convert -quality $QUALITY "${file}" "Images Resized/${filename%\.*}.jpg"
+		   convert -unsharp 5 -despeckle -quality $QUALITY "${file}" "Images Resized/${filename%\.*}.jpg"
 	       else
 		   # 2 / 3 of the original size
 		   size_horiz_resized="$( echo "( $size_horiz / 3 ) * 2" | bc -l | sed -e 's|\.*$||g' )"
-		   convert -resize ${size_horiz_resized}x${size_horiz_resized} -quality $QUALITY "${file}" "Images Resized/${filename%\.*}.jpg"
+		   convert -resize ${size_horiz_resized}x${size_horiz_resized} -unsharp 5 -despeckle -quality $QUALITY "${file}" "Images Resized/${filename%\.*}.jpg"
 	       fi
 	   else
 	       convert -resize $SIZE -quality $QUALITY "${file}" "Images Resized/${filename%\.*}.jpg"

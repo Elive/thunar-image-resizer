@@ -50,6 +50,9 @@ QUALITY="$( $guitool --entry --entry-text="85" --title="Quality" --text="Choose 
 [[ "$QUALITY" = "cancel" ]] && exit
 [[ -z "$QUALITY" ]] && QUALITY=85
 
+if ! el_dependencies_check "bc" ; then
+    el_dependencies_install bc
+fi
 
 
 # precache

@@ -34,6 +34,8 @@ echo "$$" > "$lockfile"
 
 # end lock system }}}
 
+export LC_NUMERIC=C
+
 
 # Dialog box to choose thumb's size
 SIZE="$( $guitool --list --height=300 --title="Choose the thumbnail's size" --text="Select the resolution for the images to convert" --radiolist --column=$"Check" --column=$"Size" "" "Auto (for photos)" "" "Same" "" "320x240" "" "640x480" "" "800x600" "" "1024x768" "" "2048x1080" "" "4096x2160" "" "7680x4320" || echo cancel )"
@@ -74,17 +76,17 @@ done
 # How many files to make the progress bar
 PROGRESS=0
 NUMBER_OF_FILES="$#"
-let "INCREMENT=100/$NUMBER_OF_FILES"
+INCREMENT="$( echo "100 / $NUMBER_OF_FILES" | bc -l )"
 
 mkdir -p "Images Resized"
 
 ( for i in "$@"
    do
-       echo "$PROGRESS"
        file="$i"
        filename="${file##*/}"
        filenameraw="${filename%.*}"
        echo -e "# Converting: \t ${filename}"
+       echo "$PROGRESS"
 
        if [[ "$SIZE" = "Same" ]] ; then
 	   convert -quality $QUALITY "${file}" "Images Resized/${filename%\.*}.jpg"
@@ -105,7 +107,8 @@ mkdir -p "Images Resized"
        fi
 
 
-       let "PROGRESS+=$INCREMENT"
+       PROGRESS="$( echo "$PROGRESS + $INCREMENT" | bc -l )"
+
    done
    ) | $guitool  --progress --title "Converting Images..." --percentage=0 --auto-close --auto-kill
 

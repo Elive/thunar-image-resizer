@@ -1,5 +1,13 @@
 #!/bin/bash
+SOURCE="$0"
+source /usr/lib/elive-tools/functions
+EL_REPORTS="1"
+el_make_environment
+#. gettext.sh
+#TEXTDOMAIN=""
+#export TEXTDOMAIN
 guitool=zenity
+
 
 # Lock system (good one) {{{
 lockfile="/tmp/.$(basename $0)-${USER}.lock"
